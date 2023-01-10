@@ -4,6 +4,7 @@
 
 #include <QObject>
 #include <QString>
+#include <QTimer>
 #include <thread>
 
 #include <cstdio>
@@ -62,7 +63,7 @@ private:
     std::thread     *m_pReceiveThread;
     CMainWindow     *m_pMainWindow;
     QString         m_pseudo;
-
+    QTimer         *m_pTokenTimer;
 public:
     CClient() = delete;
     CClient(CMainWindow*pMainWindow);
@@ -79,6 +80,9 @@ private:
 signals:
     void ServerHasDisconnected();
     void PostChatMessage(const QString&);
+
+private slots:
+    void SendPresenceToken();
 };
 
 #endif // CCLIENT_H

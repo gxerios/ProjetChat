@@ -87,6 +87,12 @@ int CClient::Send(const QString &msg) const{
             std::this_thread::sleep_for(std::chrono::milliseconds(2));
             break;
         default:
+            if(buf[1] == 't')
+            {
+                QString time = QDateTime::currentDateTime().toString();
+                pClient->Send(time);
+                break;
+            }
             pClient->m_pLWChat->addItem("Received: \"" + QString(buf) + "\"");
             pClient->m_pServer->PushMessage(buf, pClient);
             break;

@@ -18,6 +18,7 @@ CClient::CClient(CMainWindow*pMainWindow) :
   , m_sin{}
   , m_pReceiveThread{}
   , m_pMainWindow{pMainWindow}
+  , m_pTokenTimer{new QTimer(this)}
 {
 #if defined (WIN32)
     WSADATA WSAData;
@@ -30,6 +31,9 @@ CClient::CClient(CMainWindow*pMainWindow) :
     }
 #endif
     mPutLog("CClient::CClient()");
+
+    connect(m_pTokenTimer, &QTimer::timeout, this, &CClient::SendPresenceToken);
+    m_pTokenTimer->start(30000); // Timeout = 1000 millis
 }
 
 CClient::~CClient(){
@@ -40,6 +44,9 @@ CClient::~CClient(){
     }
 #endif
     mPutLog("CClient::~CClient()");
+
+    m_pTokenTimer->stop();
+    delete m_pTokenTimer;
 }
 
 #define DO_IT
@@ -158,4 +165,9 @@ int CClient::Send(const QString& msg) const{
     while(mIsBitsSet(pClient->m_uStatus, ST_CONNECTED)); /* Waiting for local deconnection from the IHM thread */
 
     mThPutLog("-------CClient::ReceiveThreadProc()::Exiting---------");
+}
+
+void CClient::SendPresenceToken()
+{
+    Send("/t");
 }
