@@ -45,7 +45,7 @@ CClient::~CClient(){
 #define DO_IT
 
 int CClient::Connect(const QString &serverIp, const QString &serverPort, const QString &pseudo){
-    if(mIsBitsSet(m_uStatus, ST_CONNECTED)) return INVALID_SOCKET;
+    if(mIsBitsSet(m_uStatus, ST_CCONNECTED)) return INVALID_SOCKET;
 
     m_pseudo = pseudo;
 
@@ -74,7 +74,7 @@ int CClient::Connect(const QString &serverIp, const QString &serverPort, const Q
             " on port " +
             QString::number(htons(m_sin.sin_port)));
 #endif
-    mBitsSet(m_uStatus, ST_CONNECTED);
+    mBitsSet(m_uStatus, ST_CCONNECTED);
 
     m_pReceiveThread = new std::thread(ReceiveThreadProc, this);
 
@@ -83,10 +83,10 @@ int CClient::Connect(const QString &serverIp, const QString &serverPort, const Q
 }
 
 int CClient::Disconnect(){
-    if(mIsBitsClr(m_uStatus, ST_CONNECTED)) return INVALID_SOCKET;
+    if(mIsBitsClr(m_uStatus, ST_CCONNECTED)) return INVALID_SOCKET;
 
     send(m_sock, "", 1, 0);
-    mBitsClr(m_uStatus, ST_CONNECTED);
+    mBitsClr(m_uStatus, ST_CCONNECTED);
     m_pReceiveThread->join();
 
     delete m_pReceiveThread; m_pReceiveThread=nullptr;
@@ -98,14 +98,14 @@ int CClient::Disconnect(){
     return 0;
 }
 
-int CClient::IsConnected() const { return mIsBitsSet(m_uStatus, ST_CONNECTED); }
+int CClient::IsConnected() const { return mIsBitsSet(m_uStatus, ST_CCONNECTED); }
 
 
 int CClient::Send(const QString& msg) const{
     /**
      * ToDo: Send message to server
      */
-    if(mIsBitsClr(m_uStatus, ST_CONNECTED)) return -1;
+    if(mIsBitsClr(m_uStatus, ST_CCONNECTED)) return -1;
 
     send(m_sock, msg.toStdString().c_str(), msg.length()+1, 0);
 
@@ -128,7 +128,7 @@ int CClient::Send(const QString& msg) const{
     mBitsSet(flags, O_NONBLOCK);
     fcntl(pClient->m_sock, F_SETFL, flags);
 
-    while(res && mIsBitsSet(pClient->m_uStatus, ST_CONNECTED)){
+    while(res && mIsBitsSet(pClient->m_uStatus, ST_CCONNECTED)){
         mThPutLog(QString("CClient::ReceiveThreadProc()::Running #")+QString::number(cpt++));
 
         /* If we received data, print them on terminal */
@@ -155,7 +155,7 @@ int CClient::Send(const QString& msg) const{
 
     if(res==0) mThPutLog("-------CClient::ReceiveThreadProc()::ACK REMOTE DISCONNEXION ---------");
 
-    while(mIsBitsSet(pClient->m_uStatus, ST_CONNECTED)); /* Waiting for local deconnection from the IHM thread */
+    while(mIsBitsSet(pClient->m_uStatus, ST_CCONNECTED)); /* Waiting for local deconnection from the IHM thread */
 
     mThPutLog("-------CClient::ReceiveThreadProc()::Exiting---------");
 }

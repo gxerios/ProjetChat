@@ -48,7 +48,7 @@ class CClient : public QObject {
 private:
     enum e_statusMasks:uint32_t{
         ST_ALL_CLEARED          = 0x00000000,
-        ST_CONNECTED            = 0x00000001,
+        ST_CCONNECTED           = 0x00000001,
 #if defined (WIN32)
         ST_WSADATA_ERROR        = 0x80000000,
         ST_WSADATA_INITIATED    = 0x40000000,
