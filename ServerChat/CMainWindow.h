@@ -28,9 +28,6 @@ private slots:
 
     void on_pb_clearChats_clicked();
 
-
-    void on_cb_clients_currentIndexChanged(const QString &arg1);
     void on_cb_clients_textActivated(const QString &arg1);
-    void on_cb_clients_activated(const QString &arg1);
 };
 #endif // CMAINWINDOW_H

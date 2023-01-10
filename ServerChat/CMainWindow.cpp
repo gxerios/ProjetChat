@@ -55,21 +55,9 @@ void CMainWindow::on_pb_clearChats_clicked(){
     ui->lw_chats->clear();
 }
 
-
-void CMainWindow::on_cb_clients_currentIndexChanged(const QString &arg1){
-    (void)arg1;
-//    ui->lw_logs->addItem(arg1);
-}
-
-
 void CMainWindow::on_cb_clients_textActivated(const QString &arg1)
 {
     ui->lw_logs->addItem(arg1);
 }
 
-
-void CMainWindow::on_cb_clients_activated(const QString &arg1){
-    (void)arg1;
-    //ui->lw_logs->addItem(arg1);
-}
 
