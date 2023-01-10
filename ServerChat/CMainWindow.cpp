@@ -14,10 +14,6 @@ CMainWindow::CMainWindow(QWidget *parent)
     connect(ui->lw_chats->model(), SIGNAL(rowsInserted(QModelIndex,int,int)), ui->lw_chats, SLOT(scrollToBottom()));
     connect(ui->lw_logs->model(), SIGNAL(rowsInserted(QModelIndex,int,int)), ui->lw_logs, SLOT(scrollToBottom()));
 
-    ui->cb_clients->addItem("<@bob> 10.100.0.12");
-    ui->cb_clients->addItem("<@joe> 10.100.0.25");
-    ui->cb_clients->addItem("<@max> 10.100.0.18");
-    ui->cb_clients->addItem("<@jim> 10.100.0.33");
 
 }
 
