@@ -7,5 +7,5 @@
 
 # Features #
 
-##### - Multithreading for connect many clients
+##### - Multithreading to connect many clients
 ##### - Messages synchronization
