@@ -38,7 +38,7 @@ class CClient{
 private:
     enum e_statusMask:uint32_t{
         ST_ALL_CLEARED      = 0x00000000,
-        ST_CONNECTED        = 0x00000001,
+        ST_CCONNECTED        = 0x00000001,
     };
 private:
     CServer*        m_pServer;

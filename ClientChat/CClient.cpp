@@ -45,7 +45,7 @@ CClient::~CClient(){
 #define DO_IT
 
 int CClient::Connect(const QString &serverIp, const QString &serverPort, const QString &pseudo){
-    if(mIsBitsSet(m_uStatus, ST_CCONNECTED)) return INVALID_SOCKET;
+    if(mIsBitsSet(m_uStatus, ST_CCONNECTED)) return (int)INVALID_SOCKET;
 
     m_pseudo = pseudo;
 
@@ -54,7 +54,7 @@ int CClient::Connect(const QString &serverIp, const QString &serverPort, const Q
     m_sock = socket(AF_INET, SOCK_STREAM, 0);
     if(m_sock==INVALID_SOCKET){
         mPutLog("Failed to create socket!");
-        return INVALID_SOCKET;
+        return (int)INVALID_SOCKET;
     }
 
     /* Connection configuration */
@@ -83,7 +83,7 @@ int CClient::Connect(const QString &serverIp, const QString &serverPort, const Q
 }
 
 int CClient::Disconnect(){
-    if(mIsBitsClr(m_uStatus, ST_CCONNECTED)) return INVALID_SOCKET;
+    if(mIsBitsClr(m_uStatus, ST_CCONNECTED)) return (int)INVALID_SOCKET;
 
     send(m_sock, "", 1, 0);
     mBitsClr(m_uStatus, ST_CCONNECTED);
@@ -124,9 +124,12 @@ int CClient::Send(const QString& msg) const{
     ssize_t res=-1;
 
     /* Setting non blocking socket */
+
+#if defined (linux)
     int flags = fcntl(pClient->m_sock, F_GETFL, 0);
     mBitsSet(flags, O_NONBLOCK);
     fcntl(pClient->m_sock, F_SETFL, flags);
+#endif
 
     while(res && mIsBitsSet(pClient->m_uStatus, ST_CCONNECTED)){
         mThPutLog(QString("CClient::ReceiveThreadProc()::Running #")+QString::number(cpt++));
