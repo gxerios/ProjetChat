@@ -44,7 +44,7 @@ int CServer::Start(const QString &serverPort){
 
     if(mIsBitsSet(m_uStatus, ST_STARTED)){
         putLogs("!!!! Server already started !!!!");
-        return INVALID_SOCKET;
+        return (int)INVALID_SOCKET;
     }
 
     /* Server Socket creation */
@@ -52,7 +52,7 @@ int CServer::Start(const QString &serverPort){
     if(m_sock == INVALID_SOCKET){
         mBitsSet(m_uStatus, ST_FAILED);
         putLogs("CServer::Start() Failed to create socket!");
-        return INVALID_SOCKET;
+        return (int)INVALID_SOCKET;
     }
 
     putLogs("The socket " + QString::number(m_sock) + " is opened in TCP/IP mode.");
@@ -97,7 +97,7 @@ int CServer::Start(const QString &serverPort){
 int CServer::Stop(){
     if(mIsBitsClr(m_uStatus, ST_STARTED)){
         putLogs("!!!! Server not started yet !!!!");
-        return INVALID_SOCKET;
+        return (int)INVALID_SOCKET;
     }
 
     for(std::list<CClient*>::iterator it = m_clients.begin(); it != m_clients.end(); ++it){
@@ -171,16 +171,17 @@ int CServer::PushMessage(const QString&msg, const CClient*pClient) const{
     putThLogs("Please wait while an incoming client on port " + QString::number(pServer->m_sin.sin_port));
 
     /* Setting non blocking socket */
+#if defined (linux)
     int flags = fcntl(pServer->m_sock, F_GETFL, 0);
     flags |= O_NONBLOCK;
     fcntl(pServer->m_sock, F_SETFL, flags);
-
+#endif
     while(mIsBitsSet(pServer->m_uStatus, ST_STARTED)){
 
         switch(csock = accept(pServer->m_sock, (SOCKADDR*)&csin, &crecsize)){
         case INVALID_SOCKET:
         case 0:
-            usleep(1000);       /* Sleeping the thread for 1000µs... */
+            std::this_thread::sleep_for(std::chrono::duration<int, std::milli>(1));       /* Sleeping the thread for 1000µs... */
             break;
         default:
             putThLogs("An incoming client with socket " + QString::number(csock) + " of " +

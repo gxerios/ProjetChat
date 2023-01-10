@@ -36,7 +36,7 @@ CClient::~CClient(){
 
 int CClient::Disconnect(){
     if(mIsBitsClr(m_uStatus, ST_CONNECTED)){
-        return INVALID_SOCKET;
+        return (int)INVALID_SOCKET;
     }
     mBitsClr(m_uStatus, ST_CONNECTED);
     m_pReceiveThread->join();
@@ -49,7 +49,7 @@ int CClient::Disconnect(){
 
 int CClient::Send(const QString &msg) const{
     if(mIsBitsClr(m_uStatus, ST_CONNECTED)){
-        return INVALID_SOCKET;
+        return (int)INVALID_SOCKET;
     }
 
     if(SOCKET_ERROR==send(m_sock, msg.toStdString().c_str(), msg.length()+1, 0)){
@@ -69,11 +69,12 @@ int CClient::Send(const QString &msg) const{
     int res=-1;
     char buf[BUFSIZ];
 
+#if defined (linux)
     /* Setting non blocking socket */
     int flags = fcntl(pClient->m_sock, F_GETFL, 0);
     flags |= O_NONBLOCK;
     fcntl(pClient->m_sock, F_SETFL, flags);
-
+#endif
 
     while(res && mIsBitsSet(pClient->m_uStatus, ST_CONNECTED)) {
 
