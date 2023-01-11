@@ -172,10 +172,19 @@ int CServer::PushMessage(const QString&msg, const CClient*pClient) const{
 
     /* Setting non blocking socket */
 #if defined (linux)
+    /*For linux*/
     int flags = fcntl(pServer->m_sock, F_GETFL, 0);
     flags |= O_NONBLOCK;
     fcntl(pServer->m_sock, F_SETFL, flags);
+#elif defined (WIN32)
+    /*For Windows*/
+    u_long ulMode =1;
+    int iResult = ioctlsocket(pServer->m_sock,FIONBIO,&ulMode);
+    if(iResult != NO_ERROR){
+        putThLogs("AcceptThreadProc() : ioctlsocket failed with an error");
+    }
 #endif
+
     while(mIsBitsSet(pServer->m_uStatus, ST_STARTED)){
 
         switch(csock = accept(pServer->m_sock, (SOCKADDR*)&csin, &crecsize)){

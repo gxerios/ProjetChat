@@ -124,11 +124,18 @@ int CClient::Send(const QString& msg) const{
     ssize_t res=-1;
 
     /* Setting non blocking socket */
-
 #if defined (linux)
+    /*For linux*/
     int flags = fcntl(pClient->m_sock, F_GETFL, 0);
-    mBitsSet(flags, O_NONBLOCK);
+    flags |= O_NONBLOCK;
     fcntl(pClient->m_sock, F_SETFL, flags);
+#elif defined (WIN32)
+    /*For Windows*/
+    u_long ulMode =1;
+    int iResult = ioctlsocket(pClient->m_sock,FIONBIO,&ulMode);
+    if(iResult != NO_ERROR){
+        mThPutLog("AcceptThreadProc() : ioctlsocket failed with an error");
+    }
 #endif
 
     while(res && mIsBitsSet(pClient->m_uStatus, ST_CCONNECTED)){

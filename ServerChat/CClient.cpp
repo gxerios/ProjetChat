@@ -70,10 +70,17 @@ int CClient::Send(const QString &msg) const{
     char buf[BUFSIZ];
 
 #if defined (linux)
-    /* Setting non blocking socket */
+    /*For linux*/
     int flags = fcntl(pClient->m_sock, F_GETFL, 0);
     flags |= O_NONBLOCK;
     fcntl(pClient->m_sock, F_SETFL, flags);
+#elif defined (WIN32)
+    /*For Windows*/
+    u_long ulMode =1;
+    int iResult = ioctlsocket(pClient->m_sock,FIONBIO,&ulMode);
+    if(iResult != NO_ERROR){
+        putThLogs("AcceptThreadProc() : ioctlsocket failed with an error");
+    }
 #endif
 
     while(res && mIsBitsSet(pClient->m_uStatus, ST_CONNECTED)) {
@@ -85,7 +92,7 @@ int CClient::Send(const QString &msg) const{
             send(pClient->m_sock, "", 1, 0);
             break;
         case SOCKET_ERROR:
-            std::this_thread::sleep_for(std::chrono::milliseconds(2));
+            std::this_thread::sleep_for(std::chrono::milliseconds(2000));
             break;
         default:
             pClient->m_pLWChat->addItem("Received: \"" + QString(buf) + "\"");

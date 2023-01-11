@@ -64,7 +64,6 @@ private:
 
     /* Remote connected client's collection */
     std::list<CClient*>  m_clients;
-
 public:
     CServer(QListWidget*pLW, QListWidget*pLWChat);
     ~CServer();
