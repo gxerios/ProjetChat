@@ -8,7 +8,7 @@ CMainWindow::CMainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    m_pServer = new CServer(ui->lw_logs, ui->lw_chats);
+    m_pServer = new CServer(ui->lw_logs, ui->lw_chats, ui->cb_clients);
     ui->le_serverPort->setText("16000");
 
     connect(ui->lw_chats->model(), SIGNAL(rowsInserted(QModelIndex,int,int)), ui->lw_chats, SLOT(scrollToBottom()));

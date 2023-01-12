@@ -3,6 +3,7 @@
 
 #include <QString>
 #include <QListWidget>
+#include <QComboBox>
 
 #include <thread>
 
@@ -44,13 +45,14 @@ private:
     CServer*        m_pServer;
     QListWidget*    m_pLW;
     QListWidget*    m_pLWChat;
+    QComboBox*      m_pLWComboBox;
     uint32_t        m_uStatus;
     SOCKET          m_sock;
     SOCKADDR_IN     m_sin;
     std::thread*    m_pReceiveThread;
 public:
     CClient() = delete;
-    CClient(CServer*pServer, QListWidget*pLW, QListWidget*pLWChat, SOCKET csock, SOCKADDR_IN csin);
+    CClient(CServer*pServer, QListWidget*pLW, QListWidget*pLWChat, QComboBox*pLWComboBox, SOCKET csock, SOCKADDR_IN csin);
     ~CClient();
     int Disconnect();
     int Send(const QString& msg) const;
