@@ -18,10 +18,11 @@
 #define putThLogs(log)
 #endif
 
-CClient::CClient(CServer*pServer, QListWidget*pLW, QListWidget*pLWChat,SOCKET csock, SOCKADDR_IN csin) :
+CClient::CClient(CServer*pServer, QListWidget*pLW, QListWidget*pLWChat, QComboBox*pLWComboBox,SOCKET csock, SOCKADDR_IN csin) :
     m_pServer{pServer}
   , m_pLW{pLW}
   , m_pLWChat{pLWChat}
+  , m_pLWComboBox{pLWComboBox}
   , m_uStatus{ST_CONNECTED}
   , m_sock{csock}
   , m_sin{csin}
@@ -95,8 +96,21 @@ int CClient::Send(const QString &msg) const{
             std::this_thread::sleep_for(std::chrono::milliseconds(2000));
             break;
         default:
-            pClient->m_pLWChat->addItem("Received: \"" + QString(buf) + "\"");
-            pClient->m_pServer->PushMessage(buf, pClient);
+            switch (buf[0]) {
+            case '/':
+                switch (buf[1]) {
+                case 'p': // Command, client give pseudo
+                    pClient->m_pLWComboBox->addItem(QString(buf+2) + "@" + QString(inet_ntoa(pClient->m_sin.sin_addr)));
+                    break;
+                default:
+                    break;
+                }
+                break;
+            default:
+                pClient->m_pLWChat->addItem("Received: \"" + QString(buf) + "\"");
+                pClient->m_pServer->PushMessage(buf, pClient);
+                break;
+            }
             break;
         }
     }

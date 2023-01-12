@@ -78,6 +78,8 @@ int CClient::Connect(const QString &serverIp, const QString &serverPort, const Q
 
     m_pReceiveThread = new std::thread(ReceiveThreadProc, this);
 
+    Send("/p " + m_pseudo); // Send the pseudo to the server
+
     mPutLog("CClient::Connect()");
     return 0;
 }
