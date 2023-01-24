@@ -8,6 +8,7 @@ Projet composé d'un client et d'un serveur, développé en C++, sur la base des
 Ce protocole est à respecter pour toute communication entre un client et le serveur.
 
 | Préfixe à la chaîne de caractère | Signification |
+| --- | --- |
 | `/p <pseudo>`	| Envoie son pseudo au serveur |
 | `/?*` | Mise à jour complète de tous les utilisateurs : trame au format `pseudo1 ip1;pseudo2 ip2;pseudo3 ip3;` |
 | `?+ <pseudo>:<ip>` | Ajoute cet utilisateur à la liste des connexions |
